@@ -9,7 +9,7 @@ model_id = sys.argv[1]
 num_repeats = 5
 config_path = '.configs'
 save_output_path = '.batch_run'
-python_path = '/home/zhiyuanpan/anaconda3/envs/dreval/bin/python'
+python_path = sys.executable
 tasks = ['coverage', 'state', 'path', 'output']
 
 os.makedirs(save_output_path, exist_ok=True)
