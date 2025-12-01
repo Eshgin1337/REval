@@ -14,8 +14,14 @@ try:
 except ImportError:
     print('Please install the vllm package')
 
-if os.path.exists('.env'):
-    load_dotenv('.env', override=True)
+# Define absolute paths for the script's directory and model generations directory
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+MODELS_GEN_DIR = os.path.join(SCRIPT_DIR, 'model_generations')
+
+# Check for .env file relative to the script's location
+ENV_PATH = os.path.join(SCRIPT_DIR, '.env')
+if os.path.exists(ENV_PATH):
+    load_dotenv(ENV_PATH, override=True)
 
 class Model:
     def __init__(self, model_id: str, temp: float, prompt_type: str, **kwargs):
@@ -143,11 +149,11 @@ class ReplayModel(Model):
         if model_id in full_ids:
             model_id = full_ids[model_id]
         super().__init__(model_id, temp, prompt_type)
-        path = f'model_generations/{replay_task}@{self.info}'
+        path = os.path.join(MODELS_GEN_DIR, f'{replay_task}@{self.info}')
         if replay_time is None:
-            file = max(glob.glob(f'{path}/*.jsonl'), key=os.path.getctime)
+            file = max(glob.glob(os.path.join(path, '*.jsonl')), key=os.path.getctime)
         else:
-            file = f'{path}/{replay_time}.jsonl'
+            file = os.path.join(path, f'{replay_time}.jsonl')
         print(f'Load replay data from {file}')
         data = pd.read_json(file, lines=True).to_dict(orient='records')
         self.generations = []

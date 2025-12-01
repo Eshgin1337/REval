@@ -4,6 +4,7 @@ by inspecting the code with specific rules.
 '''
 import ast
 import json
+import os
 
 import pandas as pd
 
@@ -12,6 +13,9 @@ from tqdm import tqdm
 
 from dataset import DREval
 from dynamics import FunctionFactory, ClassFactory, States, Sandbox
+
+# Define the absolute path to the 'data' directory, relative to this script's location.
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 # In basic blocks, we are only interested in the following statements
 WANTED_STMTS = (ast.Assign, ast.AugAssign, ast.AnnAssign, 
@@ -258,7 +262,7 @@ def inspect_test(test_code):
 # Note: The generated task data might change very slightly (e.g., lineno order) 
 # after re-run due to the `set`s in the implementation.
 def process_dataset():
-    with open('data/DREval_data.jsonl', 'r') as f:
+    with open(os.path.join(DATA_DIR, 'DREval_data.jsonl'), 'r') as f:
         df = pd.read_json(f, lines=True).to_dict(orient='records')
     
     res = []
@@ -315,7 +319,7 @@ def process_dataset():
             raise RuntimeError('unreachable')
         res.append(item)
     
-    with open('data/DREval_tasks.jsonl', 'w') as f:
+    with open(os.path.join(DATA_DIR, 'DREval_tasks.jsonl'), 'w') as f:
         f.writelines([json.dumps(r) + '\n' for r in res])
 
 if __name__ == '__main__':
