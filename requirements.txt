@@ -1,7 +1,7 @@
 backoff==2.2.1
 bullet==2.2.0
 openai==1.13.3
-pandas==2.2.1
+pandas==2.2.3 # Updated for Python 3.13 compatibility
 python-dotenv==1.0.1
 pytz==2023.3.post1
 staticfg==0.9.5
