@@ -21,6 +21,11 @@ from dataset import DREval
 from dynamics import Nil, _NilType, FunctionFactory, ClassFactory, Sandbox
 from prompt import build_direct_prompt, build_cot_prompt
 
+# Define absolute paths for data and output directories, relative to this script's location
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+DATA_DIR = os.path.join(SCRIPT_DIR, 'data')
+MODELS_GEN_DIR = os.path.join(SCRIPT_DIR, 'model_generations')
+
 def get_time():
     return datetime.now(pytz.timezone('Asia/Shanghai')).strftime("%y-%m-%d-%H-%M")
 
@@ -79,7 +84,7 @@ class Task:
     
     @property
     def _save_path(self):
-        return f'model_generations/{self.name}@{self.model.info}'
+        return os.path.join(MODELS_GEN_DIR, f'{self.name}@{self.model.info}')
     
     def run(self):
         os.makedirs(self._save_path, exist_ok=True)
@@ -653,7 +658,7 @@ class Output(Task):
 class Consistency(Task):
     def __init__(self, model: Model, prompt_type='direct', **kwargs):
         super().__init__('consistency', model, prompt_type)
-        self.task_paths = [f'model_generations/{task}@{self.model.info}' for task in ['coverage', 'state', 'path', 'output']]
+        self.task_paths = [os.path.join(MODELS_GEN_DIR, f'{task}@{self.model.info}') for task in ['coverage', 'state', 'path', 'output']]
         self.generation_logs = []
         for task_path in self.task_paths:
             # find the latest jsonl file in this path
